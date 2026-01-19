@@ -1,150 +1,191 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>KANDAR CAPITAL</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0e0e11;
-      color: #fff;
-    }
-    header {
-      background: #12121a;
-      padding: 20px;
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-      letter-spacing: 2px;
-    }
-    nav {
-      display: flex;
-      justify-content: space-around;
-      background: #1a1a24;
-      padding: 10px 0;
-    }
-    nav button {
-      background: none;
-      border: none;
-      color: #aaa;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    nav button.active {
-      color: #00ffcc;
-      font-weight: bold;
-    }
-    .container {
-      padding: 20px;
-    }
-    .card {
-      background: #1b1b26;
-      border-radius: 10px;
-      padding: 15px;
-      margin-bottom: 20px;
-    }
-    .big {
-      font-size: 28px;
-      color: #00ffcc;
-    }
-    input, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 5px;
-      border: none;
-    }
-    button {
-      background: #00ffcc;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    canvas {
-      background: #12121a;
-      border-radius: 10px;
-      padding: 10px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KANDAR CAPITAL – Trading Journal Pro</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+body{margin:0;background:#0b0f1a;color:#fff}
+.hidden{display:none}
+header{background:#121a2f;padding:15px;text-align:center}
+header h1{margin:0;color:#00e0ff}
+.container{padding:15px}
+.card{background:#121a2f;padding:15px;border-radius:10px;margin-bottom:15px}
+input,select,button{width:100%;padding:8px;margin:5px 0;border-radius:5px;border:none}
+button{background:#00e0ff;color:#000;font-weight:bold;cursor:pointer}
+button:hover{opacity:0.9}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{border:1px solid #333;padding:5px;text-align:center}
+th{background:#0f2540}
+.nav{display:flex;gap:5px;margin-bottom:10px}
+.nav button{flex:1}
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.stat{background:#0f2540;padding:10px;border-radius:8px;text-align:center}
+.stat h3{margin:5px 0;color:#00e0ff}
+footer{text-align:center;font-size:12px;color:#aaa;padding:10px}
+</style>
 </head>
-
 <body>
 
-<header>KANDAR CAPITAL</header>
+<!-- LOGIN -->
+<div id="login" class="container">
+  <div class="card">
+    <h2>🔐 Login Kandar Capital</h2>
+    <input type="password" id="pin" placeholder="Masukkan PIN">
+    <button onclick="login()">Masuk</button>
+    <p id="loginMsg"></p>
+  </div>
+</div>
 
-<nav>
-  <button class="active" onclick="show('home')">Home</button>
-  <button onclick="show('journal')">Jurnal</button>
-  <button onclick="show('portfolio')">Portofolio</button>
-</nav>
+<!-- APP -->
+<div id="app" class="hidden">
+<header>
+  <h1>KANDAR CAPITAL</h1>
+  <small>Professional Trading Journal</small>
+</header>
 
 <div class="container">
 
-  <div id="home">
-    <div class="card">
-      <div>Total Portofolio</div>
-      <div class="big" id="total">$0</div>
-    </div>
+<div class="nav">
+  <button onclick="show('dashboard')">Dashboard</button>
+  <button onclick="show('journal')">Journal</button>
+  <button onclick="show('analytics')">Chart</button>
+  <button onclick="show('tools')">Tools</button>
+</div>
 
-    <div class="card">
-      <canvas id="chart"></canvas>
-    </div>
+<!-- DASHBOARD -->
+<div id="dashboard" class="card">
+  <h2>📊 Dashboard</h2>
+  <div class="stat-grid">
+    <div class="stat"><h3 id="balance">$0</h3>Total Balance</div>
+    <div class="stat"><h3 id="profit">$0</h3>Total Profit</div>
+    <div class="stat"><h3 id="winrate">0%</h3>Win Rate</div>
+    <div class="stat"><h3 id="trades">0</h3>Total Trades</div>
   </div>
+</div>
 
-  <div id="journal" style="display:none">
-    <div class="card">
-      <h3>Tambah Profit / Loss</h3>
-      <input type="number" id="value" placeholder="Masukkan angka">
-      <button onclick="add()">Simpan</button>
-    </div>
-  </div>
+<!-- JOURNAL -->
+<div id="journal" class="card hidden">
+  <h2>📝 Trading Journal</h2>
+  <input id="pair" placeholder="Pair (XAUUSD)">
+  <select id="type"><option>BUY</option><option>SELL</option></select>
+  <input id="profitInput" placeholder="Profit / Loss ($)">
+  <button onclick="addTrade()">Tambah Trade</button>
 
-  <div id="portfolio" style="display:none">
-    <div class="card">
-      <h3>Profil</h3>
-      <p>Nama: <b>KANDAR CAPITAL</b></p>
-      <p>Status: Trading Journal System</p>
-    </div>
-  </div>
+  <table>
+    <thead>
+      <tr><th>No</th><th>Pair</th><th>Type</th><th>P/L</th></tr>
+    </thead>
+    <tbody id="table"></tbody>
+  </table>
+</div>
+
+<!-- ANALYTICS -->
+<div id="analytics" class="card hidden">
+  <h2>📈 Equity Curve</h2>
+  <canvas id="equityChart"></canvas>
+</div>
+
+<!-- TOOLS -->
+<div id="tools" class="card hidden">
+  <h2>🧮 Tools</h2>
+  <input id="risk" placeholder="Risk %">
+  <input id="balanceCalc" placeholder="Balance">
+  <button onclick="calcRisk()">Hitung Risk ($)</button>
+  <p id="riskResult"></p>
+
+  <button style="background:red;color:white" onclick="resetData()">RESET SEMUA DATA</button>
+</div>
 
 </div>
 
+<footer>© 2026 KANDAR CAPITAL – Private Trading System</footer>
+</div>
+
 <script>
-  let data = JSON.parse(localStorage.getItem('profit')) || [];
-  let total = data.reduce((a,b)=>a+b,0);
-  document.getElementById('total').innerText = "$" + total;
+let data = JSON.parse(localStorage.getItem("kandarData")) || [];
+let equity = [];
 
-  function add(){
-    let v = Number(document.getElementById('value').value);
-    if(!v) return;
-    data.push(v);
-    localStorage.setItem('profit', JSON.stringify(data));
-    location.reload();
+function login(){
+  if(document.getElementById("pin").value==="258369"){
+    document.getElementById("login").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+    update();
+  } else {
+    document.getElementById("loginMsg").innerText="PIN SALAH";
   }
+}
 
-  function show(id){
-    ['home','journal','portfolio'].forEach(x=>{
-      document.getElementById(x).style.display = x===id?'block':'none';
-    });
-    document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-    event.target.classList.add('active');
-  }
+function show(id){
+  ["dashboard","journal","analytics","tools"].forEach(x=>{
+    document.getElementById(x).classList.add("hidden");
+  });
+  document.getElementById(id).classList.remove("hidden");
+}
 
-  new Chart(document.getElementById('chart'),{
-    type:'line',
+function addTrade(){
+  let p = parseFloat(document.getElementById("profitInput").value);
+  if(isNaN(p)) return;
+  data.push({
+    pair:pair.value,
+    type:type.value,
+    profit:p
+  });
+  localStorage.setItem("kandarData",JSON.stringify(data));
+  update();
+}
+
+function update(){
+  let tbody=document.getElementById("table");
+  tbody.innerHTML="";
+  let total=0, win=0;
+  equity=[];
+  data.forEach((t,i)=>{
+    total+=t.profit;
+    if(t.profit>0) win++;
+    equity.push(total);
+    tbody.innerHTML+=`<tr>
+      <td>${i+1}</td>
+      <td>${t.pair}</td>
+      <td>${t.type}</td>
+      <td>${t.profit}</td>
+    </tr>`;
+  });
+  balance.innerText="$"+total.toFixed(2);
+  profit.innerText="$"+total.toFixed(2);
+  trades.innerText=data.length;
+  winrate.innerText=data.length?((win/data.length)*100).toFixed(1)+"%":"0%";
+  drawChart();
+}
+
+function drawChart(){
+  const ctx=document.getElementById("equityChart");
+  if(window.chart) window.chart.destroy();
+  window.chart=new Chart(ctx,{
+    type:"line",
     data:{
-      labels:data.map((_,i)=>i+1),
-      datasets:[{
-        label:'Profit',
-        data:data,
-        borderWidth:2
-      }]
+      labels:equity.map((_,i)=>i+1),
+      datasets:[{label:"Equity",data:equity,borderColor:"#00e0ff"}]
     }
   });
+}
+
+function calcRisk(){
+  let r=parseFloat(risk.value);
+  let b=parseFloat(balanceCalc.value);
+  if(isNaN(r)||isNaN(b)) return;
+  riskResult.innerText="Risk = $"+((r/100)*b).toFixed(2);
+}
+
+function resetData(){
+  if(confirm("HAPUS SEMUA DATA?")){
+    localStorage.removeItem("kandarData");
+    data=[];
+    update();
+  }
+}
 </script>
 
 </body>
