@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Kandar Capital – Trading Journal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+    }
+    header {
+      background: #020617;
+      padding: 16px;
+      text-align: center;
+      border-bottom: 1px solid #1e293b;
+    }
+    header h1 {
+      margin: 0;
+      color: #38bdf8;
+    }
+    header p {
+      margin: 4px 0 0;
+      font-size: 14px;
+      color: #94a3b8;
+    }
+    .container {
+      padding: 16px;
+      max-width: 900px;
+      margin: auto;
+    }
+    .card {
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #22d3ee;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      border: none;
+      font-size: 14px;
+    }
+    input, select {
+      background: #020617;
+      color: #e5e7eb;
+      border: 1px solid #1e293b;
+    }
+    button {
+      background: #38bdf8;
+      color: #020617;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0ea5e9;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+    table th, table td {
+      border: 1px solid #1e293b;
+      padding: 8px;
+      font-size: 13px;
+      text-align: center;
+    }
+    table th {
+      background: #020617;
+      color: #38bdf8;
+    }
+    footer {
+      text-align: center;
+      padding: 12px;
+      font-size: 12px;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Kandar Capital</h1>
+  <p>Personal Trading Journal & Portfolio</p>
+</header>
+
+<div class="container">
+
+  <div class="card">
+    <h2>Tambah Jurnal Trading</h2>
+    <input id="date" type="date">
+    <input id="pair" placeholder="Pair (contoh: XAUUSD)">
+    <select id="result">
+      <option value="profit">Profit</option>
+      <option value="loss">Loss</option>
+    </select>
+    <input id="amount" type="number" placeholder="Jumlah (USD)">
+    <button onclick="addTrade()">Simpan Jurnal</button>
+  </div>
+
+  <div class="card">
+    <h2>Riwayat Trading</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Tanggal</th>
+          <th>Pair</th>
+          <th>Hasil</th>
+          <th>Jumlah</th>
+        </tr>
+      </thead>
+      <tbody id="tradeTable"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<footer>
+  © 2026 Kandar Capital — Private Journal
+</footer>
+
+<script>
+  const table = document.getElementById("tradeTable");
+
+  function addTrade() {
+    const date = document.getElementById("date").value;
+    const pair = document.getElementById("pair").value;
+    const result = document.getElementById("result").value;
+    const amount = document.getElementById("amount").value;
+
+    if (!date || !pair || !amount) {
+      alert("Lengkapi semua data");
+      return;
+    }
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${date}</td>
+      <td>${pair}</td>
+      <td>${result}</td>
+      <td>${amount}</td>
+    `;
+    table.appendChild(row);
+
+    document.getElementById("pair").value = "";
+    document.getElementById("amount").value = "";
+  }
+</script>
+
+</body>
+</html>
