@@ -1,161 +1,150 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Kandar Capital – Trading Journal</title>
+  <title>KANDAR CAPITAL</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
     body {
       margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #0f172a;
-      color: #e5e7eb;
+      font-family: Arial, sans-serif;
+      background: #0e0e11;
+      color: #fff;
     }
     header {
-      background: #020617;
-      padding: 16px;
+      background: #12121a;
+      padding: 20px;
       text-align: center;
-      border-bottom: 1px solid #1e293b;
+      font-size: 24px;
+      font-weight: bold;
+      letter-spacing: 2px;
     }
-    header h1 {
-      margin: 0;
-      color: #38bdf8;
+    nav {
+      display: flex;
+      justify-content: space-around;
+      background: #1a1a24;
+      padding: 10px 0;
     }
-    header p {
-      margin: 4px 0 0;
-      font-size: 14px;
-      color: #94a3b8;
+    nav button {
+      background: none;
+      border: none;
+      color: #aaa;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    nav button.active {
+      color: #00ffcc;
+      font-weight: bold;
     }
     .container {
-      padding: 16px;
-      max-width: 900px;
-      margin: auto;
+      padding: 20px;
     }
     .card {
-      background: #020617;
-      border: 1px solid #1e293b;
+      background: #1b1b26;
       border-radius: 10px;
-      padding: 16px;
-      margin-bottom: 16px;
+      padding: 15px;
+      margin-bottom: 20px;
     }
-    .card h2 {
-      margin-top: 0;
-      color: #22d3ee;
+    .big {
+      font-size: 28px;
+      color: #00ffcc;
     }
-    input, select, button {
+    input, button {
       width: 100%;
       padding: 10px;
-      margin-top: 8px;
-      margin-bottom: 12px;
-      border-radius: 6px;
+      margin-top: 10px;
+      border-radius: 5px;
       border: none;
-      font-size: 14px;
-    }
-    input, select {
-      background: #020617;
-      color: #e5e7eb;
-      border: 1px solid #1e293b;
     }
     button {
-      background: #38bdf8;
-      color: #020617;
+      background: #00ffcc;
       font-weight: bold;
       cursor: pointer;
     }
-    button:hover {
-      background: #0ea5e9;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 12px;
-    }
-    table th, table td {
-      border: 1px solid #1e293b;
-      padding: 8px;
-      font-size: 13px;
-      text-align: center;
-    }
-    table th {
-      background: #020617;
-      color: #38bdf8;
-    }
-    footer {
-      text-align: center;
-      padding: 12px;
-      font-size: 12px;
-      color: #64748b;
+    canvas {
+      background: #12121a;
+      border-radius: 10px;
+      padding: 10px;
     }
   </style>
 </head>
+
 <body>
 
-<header>
-  <h1>Kandar Capital</h1>
-  <p>Personal Trading Journal & Portfolio</p>
-</header>
+<header>KANDAR CAPITAL</header>
+
+<nav>
+  <button class="active" onclick="show('home')">Home</button>
+  <button onclick="show('journal')">Jurnal</button>
+  <button onclick="show('portfolio')">Portofolio</button>
+</nav>
 
 <div class="container">
 
-  <div class="card">
-    <h2>Tambah Jurnal Trading</h2>
-    <input id="date" type="date">
-    <input id="pair" placeholder="Pair (contoh: XAUUSD)">
-    <select id="result">
-      <option value="profit">Profit</option>
-      <option value="loss">Loss</option>
-    </select>
-    <input id="amount" type="number" placeholder="Jumlah (USD)">
-    <button onclick="addTrade()">Simpan Jurnal</button>
+  <div id="home">
+    <div class="card">
+      <div>Total Portofolio</div>
+      <div class="big" id="total">$0</div>
+    </div>
+
+    <div class="card">
+      <canvas id="chart"></canvas>
+    </div>
   </div>
 
-  <div class="card">
-    <h2>Riwayat Trading</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Tanggal</th>
-          <th>Pair</th>
-          <th>Hasil</th>
-          <th>Jumlah</th>
-        </tr>
-      </thead>
-      <tbody id="tradeTable"></tbody>
-    </table>
+  <div id="journal" style="display:none">
+    <div class="card">
+      <h3>Tambah Profit / Loss</h3>
+      <input type="number" id="value" placeholder="Masukkan angka">
+      <button onclick="add()">Simpan</button>
+    </div>
+  </div>
+
+  <div id="portfolio" style="display:none">
+    <div class="card">
+      <h3>Profil</h3>
+      <p>Nama: <b>KANDAR CAPITAL</b></p>
+      <p>Status: Trading Journal System</p>
+    </div>
   </div>
 
 </div>
 
-<footer>
-  © 2026 Kandar Capital — Private Journal
-</footer>
-
 <script>
-  const table = document.getElementById("tradeTable");
+  let data = JSON.parse(localStorage.getItem('profit')) || [];
+  let total = data.reduce((a,b)=>a+b,0);
+  document.getElementById('total').innerText = "$" + total;
 
-  function addTrade() {
-    const date = document.getElementById("date").value;
-    const pair = document.getElementById("pair").value;
-    const result = document.getElementById("result").value;
-    const amount = document.getElementById("amount").value;
-
-    if (!date || !pair || !amount) {
-      alert("Lengkapi semua data");
-      return;
-    }
-
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${date}</td>
-      <td>${pair}</td>
-      <td>${result}</td>
-      <td>${amount}</td>
-    `;
-    table.appendChild(row);
-
-    document.getElementById("pair").value = "";
-    document.getElementById("amount").value = "";
+  function add(){
+    let v = Number(document.getElementById('value').value);
+    if(!v) return;
+    data.push(v);
+    localStorage.setItem('profit', JSON.stringify(data));
+    location.reload();
   }
+
+  function show(id){
+    ['home','journal','portfolio'].forEach(x=>{
+      document.getElementById(x).style.display = x===id?'block':'none';
+    });
+    document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+
+  new Chart(document.getElementById('chart'),{
+    type:'line',
+    data:{
+      labels:data.map((_,i)=>i+1),
+      datasets:[{
+        label:'Profit',
+        data:data,
+        borderWidth:2
+      }]
+    }
+  });
 </script>
 
 </body>
