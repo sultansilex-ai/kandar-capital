@@ -2,215 +2,204 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Kandar Capital | Professional Trading Journal</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kandar Capital | Trading Journal Pro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
-:root{
-  --bg:#0b0f1a;
-  --card:#11162a;
-  --text:#e5e7eb;
-  --accent:#3b82f6;
-  --green:#22c55e;
-  --red:#ef4444;
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#0b0f1a;
+  color:#fff;
 }
-*{box-sizing:border-box;font-family:Inter,system-ui}
-body{margin:0;background:var(--bg);color:var(--text)}
 header{
-  padding:16px 24px;
-  background:#020617;
-  font-size:20px;
-  font-weight:700;
-  letter-spacing:1px;
+  background:#11172a;
+  padding:15px;
+  text-align:center;
+  font-size:22px;
+  font-weight:bold;
 }
-nav{
-  display:flex;
-  gap:10px;
-  padding:12px;
-  background:#020617;
+.container{
+  padding:20px;
+  max-width:1100px;
+  margin:auto;
 }
-nav button{
-  background:#020617;
-  color:var(--text);
-  border:1px solid #1e293b;
-  padding:8px 14px;
-  cursor:pointer;
-}
-nav button.active{background:var(--accent)}
-section{display:none;padding:20px}
-section.active{display:block}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
 .card{
-  background:var(--card);
-  padding:16px;
+  background:#151c35;
   border-radius:10px;
+  padding:15px;
+  margin-bottom:15px;
 }
-.card h3{margin:0 0 8px;font-size:14px;color:#9ca3af}
-.card p{font-size:22px;margin:0;font-weight:700}
-table{width:100%;border-collapse:collapse;margin-top:14px}
-th,td{border-bottom:1px solid #1e293b;padding:8px;text-align:center}
-input,select{
+input,button{
   width:100%;
-  padding:8px;
-  background:#020617;
-  color:var(--text);
-  border:1px solid #1e293b;
-}
-button.primary{
-  background:var(--accent);
-  border:none;
   padding:10px;
-  width:100%;
-  margin-top:10px;
-  font-weight:700;
+  margin:5px 0;
+  border-radius:6px;
+  border:none;
+}
+button{
+  background:#1f6fff;
+  color:#fff;
+  font-weight:bold;
   cursor:pointer;
 }
-.green{color:var(--green)}
-.red{color:var(--red)}
-.login{
-  height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+button:hover{opacity:0.9}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:10px;
 }
-.login-box{
-  background:var(--card);
-  padding:30px;
-  border-radius:12px;
-  width:280px;
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+th,td{
+  border-bottom:1px solid #333;
+  padding:8px;
+  text-align:center;
+}
+th{background:#1f2a55}
+.hidden{display:none}
+footer{
+  text-align:center;
+  padding:10px;
+  color:#777;
 }
 </style>
 </head>
 
 <body>
 
-<div class="login" id="login">
-  <div class="login-box">
-    <h2>KANDAR CAPITAL</h2>
-    <p>Masukkan PIN</p>
-    <input id="pin" type="password" placeholder="PIN">
-    <button class="primary" onclick="login()">MASUK</button>
+<header>KANDAR CAPITAL – Trading Journal Profesional</header>
+
+<!-- LOGIN -->
+<div class="container" id="loginBox">
+  <div class="card">
+    <h3>Login Dashboard</h3>
+    <input type="password" id="pin" placeholder="Masukkan PIN">
+    <button onclick="login()">MASUK</button>
   </div>
 </div>
 
-<div id="app" style="display:none">
+<!-- APP -->
+<div class="container hidden" id="appBox">
 
-<header>KANDAR CAPITAL – Trading Journal</header>
+  <div class="grid">
+    <div class="card">
+      <h4>Modal Awal</h4>
+      <input type="number" id="modalInput">
+      <button onclick="setModal()">Simpan Modal</button>
+    </div>
 
-<nav>
-  <button onclick="show('dash')" class="active">Dashboard</button>
-  <button onclick="show('journal')">Journal</button>
-  <button onclick="show('stats')">Statistik</button>
-  <button onclick="show('portfolio')">Portfolio</button>
-</nav>
+    <div class="card">
+      <h4>Total Portfolio</h4>
+      <h2 id="portfolio">0</h2>
+    </div>
 
-<section id="dash" class="active">
-  <div class="cards">
-    <div class="card"><h3>Total Balance</h3><p id="balance">$0</p></div>
-    <div class="card"><h3>Total Profit</h3><p id="profit">$0</p></div>
-    <div class="card"><h3>Winrate</h3><p id="winrate">0%</p></div>
-    <div class="card"><h3>Total Trade</h3><p id="totalTrade">0</p></div>
+    <div class="card">
+      <h4>Total Profit</h4>
+      <h2 id="profit">0</h2>
+    </div>
   </div>
-  <canvas id="equity" height="120"></canvas>
-</section>
 
-<section id="journal">
   <div class="card">
-    <h3>Tambah Trade</h3>
-    <input id="pair" placeholder="Pair (XAUUSD)">
-    <select id="type">
-      <option>BUY</option><option>SELL</option>
-    </select>
-    <input id="profitInput" type="number" placeholder="Profit / Loss ($)">
-    <button class="primary" onclick="addTrade()">SIMPAN TRADE</button>
+    <h3>Tambah Trading</h3>
+    <input type="date" id="date">
+    <input type="text" id="pair" placeholder="Pair (XAUUSD)">
+    <input type="number" id="result" placeholder="Profit / Loss">
+    <button onclick="addTrade()">Tambah</button>
   </div>
 
-  <table>
-    <thead><tr><th>Pair</th><th>Type</th><th>P/L</th></tr></thead>
-    <tbody id="table"></tbody>
-  </table>
-</section>
-
-<section id="stats">
-  <div class="cards">
-    <div class="card"><h3>Win</h3><p id="win">0</p></div>
-    <div class="card"><h3>Loss</h3><p id="loss">0</p></div>
-    <div class="card"><h3>Max Drawdown</h3><p id="dd">$0</p></div>
-  </div>
-</section>
-
-<section id="portfolio">
   <div class="card">
-    <h3>Modal Awal</h3>
-    <input id="modal" type="number" placeholder="Modal awal">
-    <button class="primary" onclick="setModal()">SIMPAN</button>
+    <h3>Riwayat Trading</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Tanggal</th>
+          <th>Pair</th>
+          <th>Hasil</th>
+        </tr>
+      </thead>
+      <tbody id="tradeTable"></tbody>
+    </table>
   </div>
-</section>
+
+  <div class="card">
+    <h3>Grafik Portfolio</h3>
+    <canvas id="chart"></canvas>
+  </div>
 
 </div>
+
+<footer>© 2026 Kandar Capital</footer>
 
 <script>
-let data=JSON.parse(localStorage.getItem('trades')||"[]");
-let modal=localStorage.getItem('modal')||0;
+const PIN = "258369";
+let modal = Number(localStorage.getItem("modal")) || 0;
+let trades = JSON.parse(localStorage.getItem("trades")) || [];
+let chart;
 
 function login(){
-  if(document.getElementById('pin').value==="258369"){
-    login.style.display="none";
-    app.style.display="block";
+  const pin = document.getElementById("pin").value;
+  if(pin === PIN){
+    document.getElementById("loginBox").classList.add("hidden");
+    document.getElementById("appBox").classList.remove("hidden");
     render();
-  }else alert("PIN SALAH");
-}
-
-function show(id){
-  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-  event.target.classList.add('active');
-}
-
-function addTrade(){
-  data.push({
-    pair:pair.value,
-    type:type.value,
-    profit:Number(profitInput.value)
-  });
-  localStorage.setItem('trades',JSON.stringify(data));
-  render();
+  }else{
+    alert("PIN SALAH");
+  }
 }
 
 function setModal(){
-  modal=modal.value;
-  localStorage.setItem('modal',modal);
+  modal = Number(document.getElementById("modalInput").value);
+  localStorage.setItem("modal", modal);
+  render();
+}
+
+function addTrade(){
+  const trade = {
+    date: date.value,
+    pair: pair.value,
+    result: Number(result.value)
+  };
+  trades.push(trade);
+  localStorage.setItem("trades", JSON.stringify(trades));
   render();
 }
 
 function render(){
-  let total=0,win=0,loss=0;
-  table.innerHTML="";
-  data.forEach(t=>{
-    total+=t.profit;
-    t.profit>0?win++:loss++;
-    table.innerHTML+=`<tr><td>${t.pair}</td><td>${t.type}</td><td class="${t.profit>0?'green':'red'}">$${t.profit}</td></tr>`;
+  document.getElementById("modalInput").value = modal;
+
+  let totalProfit = trades.reduce((a,b)=>a+b.result,0);
+  document.getElementById("profit").innerText = totalProfit;
+  document.getElementById("portfolio").innerText = modal + totalProfit;
+
+  tradeTable.innerHTML = "";
+  trades.forEach(t=>{
+    tradeTable.innerHTML += `
+      <tr>
+        <td>${t.date}</td>
+        <td>${t.pair}</td>
+        <td>${t.result}</td>
+      </tr>`;
   });
-  balance.innerText="$"+(Number(modal)+total);
-  profit.innerText="$"+total;
-  totalTrade.innerText=data.length;
-  winrate.innerText=data.length?Math.round(win/data.length*100)+"%":"0%";
-  win.innerText=win;
-  loss.innerText=loss;
+
   drawChart();
 }
 
 function drawChart(){
-  const ctx=document.getElementById('equity');
-  let eq=[],sum=Number(modal);
-  data.forEach(t=>{sum+=t.profit;eq.push(sum)});
-  new Chart(ctx,{
-    type:'line',
-    data:{labels:eq.map((_,i)=>i+1),datasets:[{data:eq,borderColor:'#3b82f6'}]},
-    options:{plugins:{legend:{display:false}}}
+  const data = trades.map((t,i)=>modal + trades.slice(0,i+1).reduce((a,b)=>a+b.result,0));
+  if(chart) chart.destroy();
+  chart = new Chart(document.getElementById("chart"),{
+    type:"line",
+    data:{
+      labels:data.map((_,i)=>i+1),
+      datasets:[{label:"Portfolio",data}]
+    }
   });
 }
 </script>
+
 </body>
 </html>
